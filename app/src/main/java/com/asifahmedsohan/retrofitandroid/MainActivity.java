@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        getposts();
-        //getComments();
+        //getposts();
+        getComments();
     }
 
     private void getComments() {
 
-        Call<List<Comment>> call = jsonPlaceHolderApi.getComments(3);
+        Call<List<Comment>> call = jsonPlaceHolderApi.getComments("posts/3/comments");
         call.enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {

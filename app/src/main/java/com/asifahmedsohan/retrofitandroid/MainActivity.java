@@ -7,7 +7,9 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void getposts() {
 
-        Call<List<Post>> call = jsonPlaceHolderApi.getPost(new Integer[]{2,4,6}, "id", "desc");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("UserId", "1");
+        parameters.put("_sort", "id");
+        parameters.put("_order", "desc");
+
+        Call<List<Post>> call = jsonPlaceHolderApi.getPost(parameters);
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {

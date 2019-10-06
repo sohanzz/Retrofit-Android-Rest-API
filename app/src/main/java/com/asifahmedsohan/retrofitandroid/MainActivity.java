@@ -38,7 +38,40 @@ public class MainActivity extends AppCompatActivity {
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
         //getposts();
-        getComments();
+        //getComments();
+        createPost();
+    }
+
+    private void createPost() {
+
+        final Post post =new Post(23,"new title", "new text");
+
+        Call<Post> call = jsonPlaceHolderApi.createPost(post);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()){
+                    textViewResult.setText("Code:"+ response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code: " + response.code() + "\n";
+                content += "ID: " + postResponse.getId() + "\n";
+                content += "User ID: " + postResponse.getUserId()+ "\n";
+                content += "Title: " + postResponse.getTitle() + "\n";
+                content += "Body: " + postResponse.getBody() + "\n\n";
+
+                textViewResult.append(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
     }
 
     private void getComments() {

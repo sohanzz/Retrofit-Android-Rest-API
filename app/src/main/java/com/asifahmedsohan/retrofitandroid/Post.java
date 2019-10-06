@@ -21,6 +21,12 @@ public class Post {
     @Expose
     private String body;
 
+    public Post(Integer userId, String title, String body) {
+        this.userId = userId;
+        this.title = title;
+        this.body = body;
+    }
+
     public Integer getUserId() {
         return userId;
     }

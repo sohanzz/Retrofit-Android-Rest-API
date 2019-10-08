@@ -45,7 +45,26 @@ public class MainActivity extends AppCompatActivity {
         //getposts();
         //getComments();
         //createPost();
-        updatePost();
+        //updatePost();
+        deletePost();
+    }
+
+    private void deletePost() {
+
+        Call<Void> call = jsonPlaceHolderApi.deletePost(5);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                textViewResult.setText("Code: "+ response.code());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                textViewResult.setText(t.getMessage());
+
+            }
+        });
     }
 
     private void updatePost() {

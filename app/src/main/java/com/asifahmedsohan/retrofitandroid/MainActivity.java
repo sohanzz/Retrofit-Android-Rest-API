@@ -8,13 +8,17 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +45,19 @@ public class MainActivity extends AppCompatActivity {
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @NotNull
+                    @Override
+                    public okhttp3.Response intercept(@NotNull Chain chain) throws IOException {
+
+                        Request originalRequest = chain.request();
+                        Request newRequest = originalRequest.newBuilder()
+                                .header("Interceptor-Header", "XYZ")
+                                .build();
+
+                        return chain.proceed(newRequest);
+                    }
+                })
                 .addInterceptor(loggingInterceptor)
                 .build();
 
@@ -81,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         Post post = new Post(12, null, "New text");
 
-        Call<Post> call = jsonPlaceHolderApi.putPost(5, post);
+        Call<Post> call = jsonPlaceHolderApi.putPost("abc",5, post);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {

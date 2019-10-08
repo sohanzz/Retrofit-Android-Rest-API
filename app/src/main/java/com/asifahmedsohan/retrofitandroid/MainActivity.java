@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
@@ -30,16 +33,54 @@ public class MainActivity extends AppCompatActivity {
 
         textViewResult = (TextView)findViewById(R.id.text_view_result);
 
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
         //getposts();
         //getComments();
-        createPost();
+        //createPost();
+        updatePost();
+    }
+
+    private void updatePost() {
+
+        Post post = new Post(12, null, "New text");
+
+        Call<Post> call = jsonPlaceHolderApi.patchPost(5, post);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()){
+                    textViewResult.setText("Code:"+ response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code: " + response.code() + "\n";
+                content += "ID: " + postResponse.getId() + "\n";
+                content += "User ID: " + postResponse.getUserId()+ "\n";
+                content += "Title: " + postResponse.getTitle() + "\n";
+                content += "Body: " + postResponse.getBody() + "\n\n";
+
+                textViewResult.append(content);
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+                textViewResult.setText(t.getMessage());
+            }
+        });
     }
 
     private void createPost() {
